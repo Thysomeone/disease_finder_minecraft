@@ -221,6 +221,11 @@
     color: var(--text-muted);
   }
 
+  .case p.find-at {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
   .bar-track {
     background: var(--border);
     height: 6px;
@@ -282,67 +287,70 @@
 
     // ==================================================
     // 1. DATA
+    //    Every cure now has a `findAt` property — set this to
+    //    the in-game location name where that cure/ingredients
+    //    can be found. Currently placeholders — edit freely.
     // ==================================================
     const diseases = [
       { name: "Chicken Pox", contractionMethod: "Exposure to chickens", contagious: true,
         symptoms: ["Rash", "Fever", "Itchiness", "Fatigue"], symptomProbabilities: [1.0, 1.0, 0.75, 0.5],
-        cure: { name: "Aciclovir", ingredients: [{ item: "Nucleoside Analogue", qty: 3 }], price: 45 } },
+        cure: { name: "Aciclovir", ingredients: [{ item: "Nucleoside Analogue", qty: 3 }], price: 45, findAt: "Find at [location name]" } },
       { name: "Headlice", contractionMethod: "Contracted from bugs getting into your hair", contagious: true,
         symptoms: ["Itchiness"], symptomProbabilities: [1.0],
-        cure: { name: "Medicated Shampoo", ingredients: [{ item: "Pyrethrin", qty: 3 }], price: 40 } },
+        cure: { name: "Medicated Shampoo", ingredients: [{ item: "Pyrethrin", qty: 3 }], price: 40, findAt: "Find at [location name]" } },
       { name: "Common Cold", contractionMethod: "Contracted from being in cold places", contagious: true,
         symptoms: ["Sneezing", "Stuffy Nose", "Headache", "Sore Throat"], symptomProbabilities: [1.0, 1.0, 0.5, 0.25],
-        cure: { name: "Cough Syrup", ingredients: [{ item: "Pseudoephedrine", qty: 3 }], price: 55 } },
+        cure: { name: "Cough Syrup", ingredients: [{ item: "Pseudoephedrine", qty: 3 }], price: 55, findAt: "Find at [location name]" } },
       { name: "Flux", contractionMethod: "Contracted by drinking unclean water", contagious: false,
         symptoms: ["Dehydration", "Stomach Ache", "Vomiting"], symptomProbabilities: [1.0, 0.75, 0.5],
-        cure: { name: "IV Fluids", ingredients: [{ item: "Electrolyte Tincture", qty: 3 }], price: 60 } },
+        cure: { name: "IV Fluids", ingredients: [{ item: "Electrolyte Tincture", qty: 3 }], price: 60, findAt: "Find at [location name]" } },
       { name: "Forest Fever", contractionMethod: "Contracted from a tick bite in forests", contagious: false,
         symptoms: ["Fever", "Rash", "Headache", "Sweating"], symptomProbabilities: [1.0, 1.0, 0.5, 0.3],
-        cure: { name: "Doxycycline", ingredients: [{ item: "Streptomyces Culture", qty: 3 }], price: 55 } },
+        cure: { name: "Doxycycline", ingredients: [{ item: "Streptomyces Culture", qty: 3 }], price: 55, findAt: "Find at [location name]" } },
       { name: "Food Poisoning", contractionMethod: "Eating raw meat", contagious: false,
         symptoms: ["Nausea", "Stomach Ache", "Vomiting", "Diarrhea"], symptomProbabilities: [1.0, 1.0, 0.5, 0.5],
-        cure: { name: "Azithromycin", ingredients: [{ item: "Saccharopolyspora Culture", qty: 3 }], price: 55 } },
+        cure: { name: "Azithromycin", ingredients: [{ item: "Saccharopolyspora Culture", qty: 3 }], price: 55, findAt: "Find at [location name]" } },
       { name: "Blockjaw", contractionMethod: "Contracted from rusty metal", contagious: false,
         symptoms: ["Stiffness", "Sweating", "Fever"], symptomProbabilities: [1.0, 0.1, 0.1],
-        cure: { name: "Metronidazole", ingredients: [{ item: "Pseudomonas Culture", qty: 3 }], price: 55 } },
+        cure: { name: "Metronidazole", ingredients: [{ item: "Pseudomonas Culture", qty: 3 }], price: 55, findAt: "Find at [location name]" } },
       { name: "Ear Infection", contractionMethod: "Contracted from water getting into your ears while swimming", contagious: false,
         symptoms: ["Tinnitus", "Headache", "Fever"], symptomProbabilities: [1.0, 0.6, 0.05],
-        cure: { name: "Amoxicillin", ingredients: [{ item: "Penicillium Culture", qty: 3 }], price: 65 } },
+        cure: { name: "Amoxicillin", ingredients: [{ item: "Penicillium Culture", qty: 3 }], price: 65, findAt: "Find at [location name]" } },
       { name: "Bug Bite Fever", contractionMethod: "Contracted from a bug bite in tropical climates", contagious: false,
         symptoms: ["Fever", "Jaundice", "Headache", "Sweating"], symptomProbabilities: [1.0, 1.0, 0.5, 0.3],
-        cure: { name: "Chloroquine", ingredients: [{ item: "Quinine Tincture", qty: 3 }], price: 65 } },
+        cure: { name: "Chloroquine", ingredients: [{ item: "Quinine Tincture", qty: 3 }], price: 65, findAt: "Find at [location name]" } },
       { name: "Mad Cow Disease", contractionMethod: "Contracted from contaminated beef", contagious: false,
         symptoms: ["Headache"], symptomProbabilities: [1.0],
         cure: { name: "Pain Relief", ingredients: [
             { item: "Red Mushroom", qty: 1 }, { item: "Glass Bottle", qty: 1 }, { item: "Gunpowder", qty: 1 },
-            { item: "Glowstone Dust", qty: 1 }, { item: "Magma Cream", qty: 1 } ], price: 55 } },
+            { item: "Glowstone Dust", qty: 1 }, { item: "Magma Cream", qty: 1 } ], price: 55, findAt: "Find at [location name]" } },
       { name: "Webbed Foot", contractionMethod: "Contracted from too much time in swamps or near waterlogged areas", contagious: false,
         symptoms: ["Enhanced Swimming", "Sore Feet"], symptomProbabilities: [1.0, 1.0],
         cure: { name: "Featherpluck Tonic", ingredients: [
             { item: "Feather", qty: 2 }, { item: "Phantom Membrane", qty: 1 }, { item: "Honey Bottle", qty: 1 },
-            { item: "Blaze Powder", qty: 1 } ], price: 5, coPay: 25 } },
+            { item: "Blaze Powder", qty: 1 } ], price: 5, coPay: 25, findAt: "Find at [location name]" } },
       { name: "Hyperglycemia", contractionMethod: "Contracted from eating sugary foods", contagious: false,
         symptoms: ["Nausea", "Hunger", "Bleeding"], symptomProbabilities: [0.7, 1.0, 0.6],
         cure: { name: "Insulin", ingredients: [
-            { item: "Melon", qty: 1 }, { item: "Egg", qty: 1 }, { item: "Glass Bottle", qty: 1 } ], price: 10, coPay: 15 } },
+            { item: "Melon", qty: 1 }, { item: "Egg", qty: 1 }, { item: "Glass Bottle", qty: 1 } ], price: 10, coPay: 15, findAt: "Find at [location name]" } },
       { name: "Hay Fever", contractionMethod: "Contracted from an allergic reaction to pollen", contagious: false,
         symptoms: ["Sneezing", "Itchiness", "Rash"], symptomProbabilities: [1.0, 1.0, 0.1],
-        cure: { name: "Antihistamine", ingredients: [{ item: "Allergy Tincture", qty: 3 }], price: 10, coPay: 15 } },
+        cure: { name: "Antihistamine", ingredients: [{ item: "Allergy Tincture", qty: 3 }], price: 10, coPay: 15, findAt: "Find at [location name]" } },
       { name: "Broken Leg", contractionMethod: "Contracted from fall damage", contagious: false,
         symptoms: ["Broken Legs"], symptomProbabilities: [1.0],
-        cure: { name: "Leg Splint", ingredients: [{ item: "Sticks", qty: 6 }], price: 25 } },
+        cure: { name: "Leg Splint", ingredients: [{ item: "Sticks", qty: 6 }], price: 25, findAt: "Find at [location name]" } },
       { name: "Broken Wrist", contractionMethod: "Contracted from getting hit", contagious: false,
         symptoms: ["Broken Wrist"], symptomProbabilities: [1.0],
-        cure: { name: "Wrist Splint", ingredients: [{ item: "Sticks", qty: 3 }], price: 20 } },
+        cure: { name: "Wrist Splint", ingredients: [{ item: "Sticks", qty: 3 }], price: 20, findAt: "Find at [location name]" } },
       { name: "Flesh Wound", contractionMethod: "Contracted from accidentally getting cut", contagious: false,
         symptoms: ["Bleeding"], symptomProbabilities: [1.0],
-        cure: { name: "Bandage", ingredients: [{ item: "Paper", qty: 8 }, { item: "Wool", qty: 1 }], price: 30 } },
+        cure: { name: "Bandage", ingredients: [{ item: "Paper", qty: 8 }, { item: "Wool", qty: 1 }], price: 30, findAt: "Find at [location name]" } },
       { name: "Hypothermia", contractionMethod: "Contracted by overexposure to cold", contagious: false,
         symptoms: ["Shivering", "Headache"], symptomProbabilities: [1.0, 1.0],
-        cure: { name: "Heat Pack", ingredients: [{ item: "Magma Cream", qty: 1 }, { item: "Paper", qty: 1 }], price: 30 } },
+        cure: { name: "Heat Pack", ingredients: [{ item: "Magma Cream", qty: 1 }, { item: "Paper", qty: 1 }], price: 30, findAt: "Find at [location name]" } },
       { name: "Heat Exhaustion", contractionMethod: "Contracted by overexposure to heat", contagious: false,
         symptoms: ["Dehydration", "Vomiting", "Headache"], symptomProbabilities: [1.0, 0.8, 0.8],
-        cure: { name: "Ice Pack", ingredients: [{ item: "Ice", qty: 1 }, { item: "Paper", qty: 1 }], price: 30 } }
+        cure: { name: "Ice Pack", ingredients: [{ item: "Ice", qty: 1 }, { item: "Paper", qty: 1 }], price: 30, findAt: "Find at [location name]" } }
     ];
 
     // ==================================================
@@ -431,6 +439,7 @@
             <p>${d.contractionMethod}</p>
             <p>Contagious: ${d.contagious ? "Yes" : "No"}</p>
             <p>Cure: ${d.cure.name} (${ingredientText}) — ${d.cure.price}$</p>
+            <p class="find-at">${d.cure.findAt}</p>
           </div>
         `;
       }).join("");
