@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ministry of Science — Symptom Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Karla:wght@400;500;700&family=Cinzel:wght@500;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+  :root {
+    --radius: 6px;
+  }
+
+  body[data-theme="light"] {
+    --bg: #f0ede2;
+    --surface: #ffffff;
+    --primary: #3c6459;
+    --primary-dark: #2a4941;
+    --accent: #b98b3e;
+    --border: #e4e0cf;
+    --text: #2a2a22;
+    --text-muted: #6b6b5c;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Karla', sans-serif;
+    --card-border-style: solid;
+    --bar-gradient: var(--primary);
+    --bar-glow: none;
+    --badge-shape: 4px;
+  }
+
+  body[data-theme="dark"] {
+    --bg: #14101c;
+    --surface: #1e1830;
+    --primary: #8b5fbf;
+    --primary-dark: #5f3f8a;
+    --accent: #c9a4ff;
+    --border: #362a4a;
+    --text: #ece6f5;
+    --text-muted: #a596bd;
+    --font-display: 'Cinzel', serif;
+    --font-body: 'EB Garamond', serif;
+    --card-border-style: dashed;
+    --bar-gradient: linear-gradient(90deg, var(--primary), var(--accent));
+    --bar-glow: 0 0 7px rgba(201, 164, 255, 0.6);
+    --badge-shape: 50%;
+  }
+
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    padding: 30px;
+    max-width: 920px;
+    margin: 0 auto;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    color: var(--primary);
+    font-size: 34px;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+  }
+  p.subtitle {
+    color: var(--text-muted);
+    margin-top: -4px;
+    font-size: 14px;
+  }
+
+
+  .theme-switcher {
+    display: flex;
+    gap: 10px;
+    margin: 18px 0 4px;
+    flex-wrap: wrap;
+  }
+  .theme-swatch {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px 7px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .theme-swatch:hover { color: var(--text); }
+  .theme-swatch.active {
+    border-color: var(--primary);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .theme-swatch .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+
+  .layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-top: 18px;
+  }
+  .column {
+    flex: 1;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+  .column h2 {
+    margin-top: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--primary);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    letter-spacing: 0.2px;
+  }
+
+  .symptom-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    border: 1px var(--card-border-style) var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .symptom-row:hover {
+    background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+    border-color: var(--primary);
+  }
+  .symptom-row:has(input:checked) {
+    background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+    border-color: var(--primary);
+  }
+  .symptom-row input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary);
+  }
+
+  #searchBox {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: var(--font-body);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  #searchBox::placeholder { color: var(--text-muted); }
+
+  .list-tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .list-tools button.link {
+    background: none;
+    border: none;
+    color: var(--primary);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    width: auto;
+  }
+
+  @media (max-width: 700px) {
+    .layout { flex-direction: column; }
+  }
+
+  .case {
+    border-left: 4px solid var(--primary);
+    background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    border-radius: 0 var(--badge-shape) var(--badge-shape) 0;
+  }
+  .case h3 {
+    margin: 0 0 6px 0;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+  }
+  .case h3 span:last-child {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .case p {
+    margin: 2px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .bar-track {
+    background: var(--border);
+    height: 6px;
+    border-radius: 3px;
+    margin: 6px 0;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: var(--bar-gradient);
+    box-shadow: var(--bar-glow);
+  }
+
+  .placeholder { color: var(--text-muted); font-size: 13px; }
+</style>
+</head>
+
+<body data-theme="light">
+
+  <h1>Ministry of Science</h1>
+  <p class="subtitle">Select your symptoms, results mignt not be accurate</p>
+
+  <div class="theme-switcher" id="themeSwitcher">
+    <button class="theme-swatch" data-theme="light"><span class="dot" style="background:#3c6459"></span>Light</button>
+    <button class="theme-swatch" data-theme="dark"><span class="dot" style="background:#8b5fbf"></span>Dark</button>
+  </div>
+
+  <div class="layout">
+
+    <div class="column">
+      <h2>Symptoms</h2>
+      <input type="text" id="searchBox" placeholder="Search symptoms...">
+      <div class="list-tools">
+        <span id="selectedCount">0 selected</span>
+        <button class="link" id="clearBtn">Clear all</button>
+      </div>
+      <div id="symptomList"></div>
+    </div>
+
+    <div class="column">
+      <h2>Likely Conditions</h2>
+      <div id="result">
+        <p class="placeholder">Results will appear here.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    const themeButtons = document.querySelectorAll('.theme-swatch');
+    function setTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      themeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.theme === theme));
+    }
+    themeButtons.forEach(btn => btn.addEventListener('click', () => setTheme(btn.dataset.theme)));
+    setTheme('light');
+
+    // ==================================================
+    // 1. DATA
+    // ==================================================
+    const diseases = [
+      { name: "Chicken Pox", contractionMethod: "Exposure to chickens", contagious: true,
+        symptoms: ["Rash", "Fever", "Itchiness", "Fatigue"], symptomProbabilities: [1.0, 1.0, 0.75, 0.5],
+        cure: { name: "Aciclovir", ingredients: [{ item: "Nucleoside Analogue", qty: 3 }], price: 45 } },
+      { name: "Headlice", contractionMethod: "Contracted from bugs getting into your hair", contagious: true,
+        symptoms: ["Itchiness"], symptomProbabilities: [1.0],
+        cure: { name: "Medicated Shampoo", ingredients: [{ item: "Pyrethrin", qty: 3 }], price: 40 } },
+      { name: "Common Cold", contractionMethod: "Contracted from being in cold places", contagious: true,
+        symptoms: ["Sneezing", "Stuffy Nose", "Headache", "Sore Throat"], symptomProbabilities: [1.0, 1.0, 0.5, 0.25],
+        cure: { name: "Cough Syrup", ingredients: [{ item: "Pseudoephedrine", qty: 3 }], price: 55 } },
+      { name: "Flux", contractionMethod: "Contracted by drinking unclean water", contagious: false,
+        symptoms: ["Dehydration", "Stomach Ache", "Vomiting"], symptomProbabilities: [1.0, 0.75, 0.5],
+        cure: { name: "IV Fluids", ingredients: [{ item: "Electrolyte Tincture", qty: 3 }], price: 60 } },
+      { name: "Forest Fever", contractionMethod: "Contracted from a tick bite in forests", contagious: false,
+        symptoms: ["Fever", "Rash", "Headache", "Sweating"], symptomProbabilities: [1.0, 1.0, 0.5, 0.3],
+        cure: { name: "Doxycycline", ingredients: [{ item: "Streptomyces Culture", qty: 3 }], price: 55 } },
+      { name: "Food Poisoning", contractionMethod: "Eating raw meat", contagious: false,
+        symptoms: ["Nausea", "Stomach Ache", "Vomiting", "Diarrhea"], symptomProbabilities: [1.0, 1.0, 0.5, 0.5],
+        cure: { name: "Azithromycin", ingredients: [{ item: "Saccharopolyspora Culture", qty: 3 }], price: 55 } },
+      { name: "Blockjaw", contractionMethod: "Contracted from rusty metal", contagious: false,
+        symptoms: ["Stiffness", "Sweating", "Fever"], symptomProbabilities: [1.0, 0.1, 0.1],
+        cure: { name: "Metronidazole", ingredients: [{ item: "Pseudomonas Culture", qty: 3 }], price: 55 } },
+      { name: "Ear Infection", contractionMethod: "Contracted from water getting into your ears while swimming", contagious: false,
+        symptoms: ["Tinnitus", "Headache", "Fever"], symptomProbabilities: [1.0, 0.6, 0.05],
+        cure: { name: "Amoxicillin", ingredients: [{ item: "Penicillium Culture", qty: 3 }], price: 65 } },
+      { name: "Bug Bite Fever", contractionMethod: "Contracted from a bug bite in tropical climates", contagious: false,
+        symptoms: ["Fever", "Jaundice", "Headache", "Sweating"], symptomProbabilities: [1.0, 1.0, 0.5, 0.3],
+        cure: { name: "Chloroquine", ingredients: [{ item: "Quinine Tincture", qty: 3 }], price: 65 } },
+      { name: "Mad Cow Disease", contractionMethod: "Contracted from contaminated beef", contagious: false,
+        symptoms: ["Headache"], symptomProbabilities: [1.0],
+        cure: { name: "Pain Relief", ingredients: [
+            { item: "Red Mushroom", qty: 1 }, { item: "Glass Bottle", qty: 1 }, { item: "Gunpowder", qty: 1 },
+            { item: "Glowstone Dust", qty: 1 }, { item: "Magma Cream", qty: 1 } ], price: 55 } },
+      { name: "Webbed Foot", contractionMethod: "Contracted from too much time in swamps or near waterlogged areas", contagious: false,
+        symptoms: ["Enhanced Swimming", "Sore Feet"], symptomProbabilities: [1.0, 1.0],
+        cure: { name: "Featherpluck Tonic", ingredients: [
+            { item: "Feather", qty: 2 }, { item: "Phantom Membrane", qty: 1 }, { item: "Honey Bottle", qty: 1 },
+            { item: "Blaze Powder", qty: 1 } ], price: 5, coPay: 25 } },
+      { name: "Hyperglycemia", contractionMethod: "Contracted from eating sugary foods", contagious: false,
+        symptoms: ["Nausea", "Hunger", "Bleeding"], symptomProbabilities: [0.7, 1.0, 0.6],
+        cure: { name: "Insulin", ingredients: [
+            { item: "Melon", qty: 1 }, { item: "Egg", qty: 1 }, { item: "Glass Bottle", qty: 1 } ], price: 10, coPay: 15 } },
+      { name: "Hay Fever", contractionMethod: "Contracted from an allergic reaction to pollen", contagious: false,
+        symptoms: ["Sneezing", "Itchiness", "Rash"], symptomProbabilities: [1.0, 1.0, 0.1],
+        cure: { name: "Antihistamine", ingredients: [{ item: "Allergy Tincture", qty: 3 }], price: 10, coPay: 15 } },
+      { name: "Broken Leg", contractionMethod: "Contracted from fall damage", contagious: false,
+        symptoms: ["Broken Legs"], symptomProbabilities: [1.0],
+        cure: { name: "Leg Splint", ingredients: [{ item: "Sticks", qty: 6 }], price: 25 } },
+      { name: "Broken Wrist", contractionMethod: "Contracted from getting hit", contagious: false,
+        symptoms: ["Broken Wrist"], symptomProbabilities: [1.0],
+        cure: { name: "Wrist Splint", ingredients: [{ item: "Sticks", qty: 3 }], price: 20 } },
+      { name: "Flesh Wound", contractionMethod: "Contracted from accidentally getting cut", contagious: false,
+        symptoms: ["Bleeding"], symptomProbabilities: [1.0],
+        cure: { name: "Bandage", ingredients: [{ item: "Paper", qty: 8 }, { item: "Wool", qty: 1 }], price: 30 } },
+      { name: "Hypothermia", contractionMethod: "Contracted by overexposure to cold", contagious: false,
+        symptoms: ["Shivering", "Headache"], symptomProbabilities: [1.0, 1.0],
+        cure: { name: "Heat Pack", ingredients: [{ item: "Magma Cream", qty: 1 }, { item: "Paper", qty: 1 }], price: 30 } },
+      { name: "Heat Exhaustion", contractionMethod: "Contracted by overexposure to heat", contagious: false,
+        symptoms: ["Dehydration", "Vomiting", "Headache"], symptomProbabilities: [1.0, 0.8, 0.8],
+        cure: { name: "Ice Pack", ingredients: [{ item: "Ice", qty: 1 }, { item: "Paper", qty: 1 }], price: 30 } }
+    ];
+
+    // ==================================================
+    // 2. BUILD CHECKBOXES
+    // ==================================================
+    const allSymptomsRaw = diseases.flatMap(d => d.symptoms);
+    const allSymptoms = [...new Set(allSymptomsRaw)].sort();
+    const symptomListDiv = document.getElementById('symptomList');
+
+    allSymptoms.forEach(symptom => {
+      symptomListDiv.innerHTML += `
+        <label class="symptom-row" data-symptom="${symptom.toLowerCase()}">
+          <input type="checkbox" class="symptom-checkbox" value="${symptom}">
+          <span>${symptom}</span>
+        </label>
+      `;
+    });
+
+    const selectedCountEl = document.getElementById('selectedCount');
+    function updateSelectedCount() {
+      const checkedCount = document.querySelectorAll('.symptom-checkbox:checked').length;
+      selectedCountEl.textContent = checkedCount + " selected";
+    }
+
+    // Every time a checkbox changes, update the count AND re-run the
+    // diagnostic — no button needed, results update live.
+    symptomListDiv.addEventListener('change', () => {
+      updateSelectedCount();
+      runDiagnostic();
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      document.querySelectorAll('.symptom-checkbox').forEach(box => box.checked = false);
+      updateSelectedCount();
+      runDiagnostic();
+    });
+
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll('.symptom-row').forEach(row => {
+        const matches = row.dataset.symptom.includes(query);
+        row.style.display = matches ? 'flex' : 'none';
+      });
+    });
+
+    // ==================================================
+    // 3. RUN DIAGNOSTIC — now called automatically on every
+    //    checkbox change instead of waiting for a button click
+    // ==================================================
+    function runDiagnostic() {
+      const allBoxes = document.querySelectorAll('.symptom-checkbox');
+      const selectedSymptoms = Array.from(allBoxes).filter(box => box.checked).map(box => box.value);
+      const resultDiv = document.getElementById('result');
+
+      if (selectedSymptoms.length === 0) {
+        resultDiv.innerHTML = '<p class="placeholder">Select at least one symptom.</p>';
+        return;
+      }
+
+      const scored = diseases.map(disease => {
+        const matched = selectedSymptoms.filter(sym => disease.symptoms.includes(sym));
+        let matchedWeight = 0;
+        matched.forEach(sym => {
+          const index = disease.symptoms.indexOf(sym);
+          matchedWeight += disease.symptomProbabilities[index];
+        });
+        const totalWeight = disease.symptomProbabilities.reduce((sum, p) => sum + p, 0);
+        const confidence = Math.round((matchedWeight / totalWeight) * 100);
+        return { disease, matched, confidence };
+      });
+
+      const relevant = scored.filter(entry => entry.matched.length > 0).sort((a, b) => b.confidence - a.confidence);
+
+      if (relevant.length === 0) {
+        resultDiv.innerHTML = '<p class="placeholder">No matching condition found.</p>';
+        return;
+      }
+
+      resultDiv.innerHTML = relevant.slice(0, 5).map(entry => {
+        const d = entry.disease;
+        const ingredientText = d.cure.ingredients.map(i => `${i.qty}x ${i.item}`).join(", ");
+        return `
+          <div class="case">
+            <h3><span>${d.name}</span><span>${entry.confidence}%</span></h3>
+            <div class="bar-track"><div class="bar-fill" style="width: ${entry.confidence}%;"></div></div>
+            <p>${d.contractionMethod}</p>
+            <p>Contagious: ${d.contagious ? "Yes" : "No"}</p>
+            <p>Cure: ${d.cure.name} (${ingredientText}) — ${d.cure.price}g</p>
+          </div>
+        `;
+      }).join("");
+    }
+  </script>
+
+</body>
+</html>
