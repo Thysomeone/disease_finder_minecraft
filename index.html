@@ -433,7 +433,7 @@
         const d = entry.disease;
         const ingredientText = d.cure.ingredients.map(i => `${i.qty}x ${i.item}`).join(", ");
         const priceText = d.cure.coPay
-          ? `$${d.cure.price} + $${d.cure.coPay} co-pay`
+          ? `$${d.cure.price} or $${d.cure.coPay} co-pay`
           : `$${d.cure.price}`;
         return `
           <div class="case">
